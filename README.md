@@ -1,2 +1,2 @@
 # vanessa-bot
-Helping me ignore messages since 2022
+She will one day be able to text just like me :)
