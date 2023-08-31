@@ -96,6 +96,10 @@ if __name__ == '__main__':
     total_items = len(prepared_message_data)
     context = 5
 
+    # Setting up state machine
+    conversation_change_count = 0
+    conversation_index = 0
+
     for i in range(total_items - context + 1):
         slice_start = i
         slice_end = i + context
@@ -133,16 +137,23 @@ if __name__ == '__main__':
         topic_vector2 = np.array([prob for _, prob in topic2])
         t = (s2_time - s1_time) / 60
         norm_t = (t-1.6)/(85051-1) * (85051 - 1.6) + 1.6
-        a = 0.8
+        a = 0.6
         # Calculate Jensen-Shannon Divergence between the two topics
         js_distance = jensen_shannon_divergence(topic_vector1, topic_vector2)
-        if((1-a) * 1/norm_t + a * (1-js_distance) > 1):
-        # if(30000/((s2_time - s1_time) / 60)*js_distance) > 60:
-             print(30000/((s2_time - s1_time) / 60)*100*js_distance)
-             print(f"Jensen-Shannon Divergence between topics: {js_distance}")
-             print((s2_time - s1_time) / 60)
-             print([s['content'] for s in s1])
-             print([s['content'] for s in s2])
+        if((1-a) * 1/norm_t + a * (1-js_distance) > 1.1):
+            print((1-a) * 1/norm_t + a * (1-js_distance))
+            print(f"Jensen-Shannon Divergence between topics: {js_distance}")
+            print((s2_time - s1_time) / 60)
+            print([s['content'] for s in s1])
+            print([s['content'] for s in s2])
+            conversation_change_count+=1
+        else:
+            if conversation_change_count > 0:
+                midpoint = int(conversation_change_count/2)
+                #for range()
+            else:
+                slices[i]['conv-idx'] = conversation_index
+            conversation_change_count=0
 
         # if(js_distance > 0.3):
 
